@@ -1,0 +1,173 @@
+---
+title: "Assignment 2"
+author: "Nemin Dholakia"
+date: "11/15/2021"
+output:
+  html_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+##1.Run the following code in R-studio to create two variables X and Y.
+
+```{r}
+set.seed(2017)
+X=runif(100)*10
+Y=X*4+3.45
+Y=rnorm(100)*0.29*Y+Y
+```
+
+##A)Plot Y against X. Include a screenshot of the plot in your submission. Using the File menu you can save the graph as a picture on your computer.  Based on the plot do you think we can fit a linear model to explain Y based on X?
+
+```{r}
+plot(X,Y)
+#yes, based on the data we can fit a model to explain Y based on X.
+```
+
+##B)Construct a simple linear model of Y based on X.Write the equation that explains Y based on X. What is the accuracy of this model?
+
+```{r}
+ 
+Model_XY= lm(Y~X)
+summary(Model_XY)
+Model_XY$coefficients
+ 
+```
+
+The following equation explains Y based on X is
+
+Y = (3.610759*X)+ 4.465490
+
+ 
+
+The accuracy of the model is 0.6517 i.e., pretty good.
+
+ 
+
+ 
+
+##C)How the  Coefficient  of  Determination,R2, of  the  model  above  is  related  to the correlation coefficient of X and Y?
+
+ 
+
+ 
+
+R2 is just the squared value of the coorelation cofficient between x and y as the regression is just based on one variable.
+
+ 
+
+```{r}
+cor(X,Y)^2
+```
+
+By above we notice that it's exact the same value of R-squared 0.6517
+
+ 
+
+ 
+
+##2.We will use the ‘mtcars’ dataset for this question. The dataset is already included in your R distribution. The dataset shows some of the characteristics of different cars.The following shows few samples (i.e. the first 6 rows) ofthe dataset.
+
+ 
+
+##A)James wants to buy a car.He and his friend, Chris, have different opinions about the Horse Power(hp) of cars. James think  the weight of a car (wt) can be  used to estimate  the  Horse Power of the car while Chris thinks the fuel consumption expressed in Mile Per Gallon (mpg), is a better estimator of the (hp). Who do you think is right? Construct simple linear models using mtcars data to answer the question.
+
+```{r}
+head(mtcars)
+James_model<- lm(mtcars$hp~mtcars$wt,data = mtcars)
+summary(James_model)
+Chris_model<- lm(mtcars$hp~mtcars$mpg,data = mtcars)
+summary(Chris_model)
+```
+
+As per the linear model of mtcars dataset Chris is right.
+
+Accuracy of Chris model is 0.6024 which is very high than that of James i.e.,0.4339.
+
+ 
+
+##B)Build a model that uses the number of cylinders (cyl) and the mile per gallon (mpg) values of a car to predict the car HorsePower (hp).Using this model, what is the estimated Horse Power of a car with 4 calendar and mpg of 22?
+
+```{r}
+Model_HP<- lm(mtcars$hp~mtcars$mpg+mtcars$cyl,data = mtcars)
+summary(Model_HP)
+Model_HP$coefficients
+predict_hp<-(Model_HP$coefficients[2]*22)+(Model_HP$coefficients[3]*4)+Model_HP$coefficients[1]
+print(paste('The estimated Horse Power of a car with 4 calendar and mpg of 22 is ',predict_hp))
+ 
+```
+
+##3.For this question, we are going to use BostonHousing dataset. The dataset is in ‘mlbench’ package, so we first need to instal the package, call the library and the load the dataset using the following commandsinstall.packages('mlbench')library(mlbench)data(BostonHousing)You should have a dataframe with the name of BostonHousing in your Global environment now.The dataset contains information about houses in different parts of Boston. Details of the dataset is explained here. Note the dataset is old, hence low houseprices!
+
+ 
+
+ 
+
+##A)Build a model to estimate the median value of owner-occupied homes (medv)based on the following  variables: crime crate  (crim),  proportion  of  residential  land  zoned  for  lots  over 25,000  sq.ft(zn),  the  local  pupil-teacher  ratio  (ptratio)  and  weather  the  whether  the  tract bounds Chas River(chas). Isthis an accurate model?
+
+```{r}
+library(mlbench)
+data(BostonHousing)
+ 
+Model_Boston<-lm(formula = BostonHousing$medv ~ BostonHousing$crim+BostonHousing$zn+BostonHousing$ptratio+BostonHousing$chas,data = BostonHousing)
+summary(Model_Boston)
+ 
+```
+
+The Model is not very accurate because the value of the R-square is 0.3599 i.e., very low.
+
+ 
+
+ 
+
+ 
+
+##B)Use the estimated coefficient to answer these questions?
+
+ 
+
+##I.Imagine  two houses  that are identical in all aspects but  one  bounds the Chas River and the other does not. Which one is more expensive and by how much?
+
+```{r}
+summary(Model_Boston)
+```
+
+##II.Imagine two houses that are identical in all aspects but in the neighborhood of one of them the pupil-teacher ratio is 15 and in the other one is 18. Which one is more expensive and by how much?
+
+```{r}
+x<- 1494*3
+x
+```
+
+##C)Which of the variables are statistically important (i.e. related to the house price)? Hint: use the p-values of the coefficients to answer.
+
+```{r}
+summary(Model_Boston)
+```
+
+Since the P-value for the model is <0.05 we can conclude that none of the variables are statistically important.
+
+ 
+
+ 
+
+##D)Use the anovaanalysis and determine the order of importance of these four variables.
+
+```{r}
+anova(Model_Boston)
+ 
+```
+
+According to the model, the following order is as given below in Desc order
+
+1.crim
+
+2.ptratio
+
+3.zn
+
+4.chas
